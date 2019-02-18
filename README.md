@@ -5,8 +5,7 @@ Copy the BachmannCardImage/APP folder to the Bachmann memory card APP folder.
 Extend the mconfig.ini file on the target Bachmann with the contens of the BachmannCardImage/mconfig.ini
 
 ## Lua scripting
-
-
+For the Lua scription please look here: [CN für BachmannM1](riesberg-net.de/cn-fuer-bachmann-m1)
 
 ## p+
 
