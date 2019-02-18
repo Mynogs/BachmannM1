@@ -1,0 +1,107 @@
+-- 28.01.2019 08:21:43 AR V1.0a
+
+--  generate = function(self, remote)
+--    if not remote then
+--      local source =
+--        [==[
+--          local block = {}
+--
+--          block.start = function()
+--            assert(block.parent.svi.readVariable, 'No connector block')
+--          end
+--
+--          block.step = function(...)
+--            local a = {...}
+--            for i = 1, #a do
+--              block.parent.svi.writeVariable('MIO/SLOT/' .. i, a[i])
+--            end
+--          end
+--
+--          return block
+--        ]==]
+--      local replaces = {
+--        ['NAME'] = self.name,
+--        ['STATION'] = (self.parameter.station - 1) * 16,
+--        ['SLOT'] = self.parameter.slot
+--      }
+--      return string.gsub(source, '%a+', replaces)
+--    end
+--    local _, _, group = remote:find('(%w*%d)')
+--    if group ~= 'BachmannM1' then
+--      return false
+--    end
+
+block.setSize(151, 51)
+
+generic = {
+  parameter = {
+    ip = '192.168.1.177',
+  },
+
+  init = function(self)
+    block.modifyFlags('SupressStopFunctionCall', true)
+    block.modifyFlags('Realtime', true)
+  end,
+
+  open = function(self)
+    gui.add('Info', 'Info', 'Bachmann M1 connector', 'Connector to Bachmann M1 during local simulation')
+    gui.add('EditIP', 'EditIP', 'Bachmann IP')
+    gui.set('EditIP', 'Text', self.parameter.ip)
+    gui.setSize()
+  end,
+
+  apply = function(self)
+    self.parameter.ip = gui.get('EditIP', 'Text')
+  end,
+
+  close = function()
+  end,
+
+  avatar = function(self)
+    return block.getDefaultAvatar{
+      Type = 0x00,
+      CenterDrawSource = 'draw.setColorA(0.89, 0.58, 0.01) draw.box(1, 1, w - 2, 3) draw.text(0, 0, w, h, "' .. self.parameter.ip .. '", 4)',
+      FillColorSource = '0.36, 0.37, 0.42',
+      PinNameColorSource = '1, 1, 1',
+    }
+  end,
+
+  generate = function(self, remote)
+    if remote then
+      return nil
+    end
+    local source =
+      [==[
+        local block = {}
+
+        block.start = function()
+          local m1com = require 'bachmann_m1com'
+          m1 = assert(m1com:newTarget('IP', m1com.M1C_TCP))
+          m1:connect()
+          block.parent.svi = {
+            readVariable = function(path)
+              local value = m1:readVariable(path)
+              --print('readVariable', path, value)
+              return value
+            end,
+            writeVariable = function(path, value)
+              m1:writeVariable(path, value)
+            end
+          }
+        end
+
+        block.step = function()
+          return
+        end
+
+        return block
+      ]==]
+    local replaces = {
+      ['NAME'] = self.name,
+      ['IP'] = self.parameter.ip,
+    }
+    return string.gsub(source, '%a+', replaces)
+  end,
+
+}
+
