@@ -15,5 +15,5 @@ To install the block library please look here: [Install blocks](https://github.c
 
 To use the BachmannM1 injector copy the BachmannM1.lua file to ...\Resources\Remote\BachmannM1.lua
 
-
+<br><br><br>
 <b>Bachmann M1 PLC ist ein Produkt der Firma [Bachman](https://www.bachmann.info/home)</b>
