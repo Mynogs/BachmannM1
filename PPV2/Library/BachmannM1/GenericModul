@@ -1,5 +1,6 @@
 -- 28.02.2017 11:13:40 AR V1.0a
 -- 01.04.2017 16:57:54 AR V1.0b
+-- 20.02.2019 16:50:38 AR V1.0a
 
 block.setSize(51, 51)
 
@@ -20,6 +21,12 @@ generic = {
           inputs = inputs + 1
         elseif mode == 2 then
           outputs = outputs + 1
+        elseif mode == 3 then
+          inputs = inputs + 1
+        elseif mode == 4 then
+          outputs = outputs + 1
+        elseif mode == 5 then
+          outputs = outputs + 1
         end
       end
       block.setInputsPinCount(inputs)
@@ -32,10 +39,25 @@ generic = {
         if mode == 1 then
           inputs = inputs + 1
           block.setInputPinDefault(inputs, 'false')
-          block.setInputPinName(inputs, i)
+          block.setInputPinTypeRestrains(inputs, 'boolean')
+          block.setInputPinName(inputs, 'DI-' .. i)
         elseif mode == 2 then
           outputs = outputs + 1
-          block.setOutputPinName(outputs, i)
+          block.setOutputPinTypeRestrains(outputs, 'boolean')
+          block.setOutputPinName(outputs, 'DO-' .. i)
+        elseif mode == 3 then
+          inputs = inputs + 1
+          block.setInputPinDefault(inputs, '0.0')
+          block.setInputPinTypeRestrains(inputs, 'number')
+          block.setInputPinName(inputs, 'AI-' .. i)
+        elseif mode == 4 then
+          outputs = outputs + 1
+          block.setOutputPinTypeRestrains(outputs, 'number')
+          block.setOutputPinName(outputs, 'AO-' .. i)
+        elseif mode == 5 then
+          outputs = outputs + 1
+          block.setOutputPinTypeRestrains(outputs, 'number')
+          block.setOutputPinName(outputs, 'PT100-' .. i)
         end
       end
     end
@@ -70,7 +92,9 @@ generic = {
         Unassigned
         Digital Input
         Digital Output
-        PT100
+        Analog Input (raw ADC value)
+        Analog Output (raw ADC value)
+        PT100 (0.1K)
       ]])
       gui.set('ComboBox' .. i, 'ItemIndex', self.parameter.channelMode[i] or 0)
     end
@@ -135,6 +159,17 @@ STEPB
         end
         step2 = step2 .. "r('MIO/" .. self.parameter.slot .. "/" .. i .."')"
       elseif mode == 3 then
+        -- AO
+        inputs = inputs + 1
+        step1 = step1 .. string.rep(' ', 10) .. "w('MIO/" .. self.parameter.slot .. "/" .. i .."', a[" .. inputs .. "])\n"
+      elseif mode == 4 then
+        -- AI
+        outputs = outputs + 1
+        if step2:len() > 0 then
+          step2 = step2 .. ', '
+        end
+        step2 = step2 .. "r('MIO/" .. self.parameter.slot .. "/" .. i .."')"
+      elseif mode == 5 then
         -- PT100
         inputs = inputs + 1
         if step2:len() > 0 then
