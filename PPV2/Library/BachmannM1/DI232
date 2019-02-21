@@ -23,7 +23,7 @@ generic = {
 
   open = function(self)
     local s = ''
-    for i = 1, 16 do
+    for i = 1, N do
       s = s .. i .. '\n'
     end
     gui.add('Info', 'Info', 'Bachmann M1', self.name)
