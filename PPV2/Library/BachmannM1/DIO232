@@ -36,11 +36,11 @@ generic = {
           inputs = inputs + 1
           block.setInputPinDefault(inputs, 'false')
           block.setInputPinName(inputs, i)
-          block.setInputPinTypeRestrains(i, 'boolean')
+          block.setInputPinTypeRestrains(inputs, 'boolean')
         elseif mode == 1 then
           outputs = outputs + 1
           block.setOutputPinName(outputs, i)
-          block.setOutputPinTypeRestrains(i, 'boolean')
+          block.setOutputPinTypeRestrains(outputs, 'boolean')
         end
       end
     end
